@@ -114,6 +114,22 @@ asset
 ``packageName`` *(optional)*
     **type**: ``string`` | ``null`` **default**: ``null``
 
+.. code-block:: yaml
+
+    # config/packages/framework.yaml
+    framework:
+        # ...
+        assets:
+            packages:
+                foo_package:
+                    base_path: /avatars
+
+.. code-block:: twig
+
+    {# the image lives at "public/avatars/avatar.png" #}
+    {{ asset(path = 'avatar.png', packageName = 'foo_package') }}
+    {# output: /avatars/avatar.png #}
+
 Returns the public path of the given asset path (which can be a CSS file, a
 JavaScript file, an image path, etc.). This function takes into account where
 the application is installed (e.g. in case the project is accessed in a host
@@ -189,6 +205,30 @@ logout_path
 Generates a relative logout URL for the given firewall. If no key is provided,
 the URL is generated for the current firewall the user is logged into.
 
+.. code-block:: yaml
+
+    # config/packages/security.yaml
+    security:
+        # ...
+
+        firewalls:
+            main:
+                # ...
+                logout:
+                    path: '/logout'
+            othername:
+                # ...
+                logout:
+                    path: '/other/logout'
+
+.. code-block:: twig
+
+    {{ logout_path(key = 'main') }}
+    {# output: /logout #}
+
+    {{ logout_path(key = 'othername') }}
+    {# output: /other/logout #}
+
 logout_url
 ~~~~~~~~~~
 
@@ -201,6 +241,30 @@ logout_url
 
 Equal to the `logout_path`_ function, but it'll generate an absolute URL
 instead of a relative one.
+
+.. code-block:: yaml
+
+    # config/packages/security.yaml
+    security:
+        # ...
+
+        firewalls:
+            main:
+                # ...
+                logout:
+                    path: '/logout'
+            othername:
+                # ...
+                logout:
+                    path: '/other/logout'
+
+.. code-block:: twig
+
+    {{ logout_url(key = 'main') }}
+    {# output: http://example.org/logout #}
+
+    {{ logout_url(key = 'othername') }}
+    {# output: http://example.org/other/logout #}
 
 path
 ~~~~
@@ -218,6 +282,14 @@ path
 
 Returns the relative URL (without the scheme and host) for the given route.
 If ``relative`` is enabled, it'll create a path relative to the current path.
+
+.. code-block:: twig
+
+    {{ path(name = 'app_blog', parameters = {page: 3}, relative = false) }}
+    {# output (depending on the route configuration): /blog/3 or /blog?page=3 #}
+
+    {{ path(name = 'app_blog', parameters = {page: 3}, relative = true) }}
+    {# output (depending on the route configuration): blog/3 or ?page=3 #}
 
 .. seealso::
 
@@ -240,6 +312,16 @@ url
 
 Returns the absolute URL (with scheme and host) for the given route. If
 ``schemeRelative`` is enabled, it'll create a scheme-relative URL.
+
+.. code-block:: twig
+
+    {{ url(name = 'app_blog', parameters = {page: 3}, schemeRelative = false) }}
+    {# output (depending on the route configuration): http://example.org/blog/3
+    or http://example.org/blog?page=3 #}
+
+    {{ url(name = 'app_blog', parameters = {page: 3}, schemeRelative = true) }}
+    {# output (depending on the route configuration): //example.org/blog/3
+    or //example.org/blog?page=3 #}
 
 .. seealso::
 
@@ -291,6 +373,11 @@ expression
 
 Creates an :class:`Symfony\\Component\\ExpressionLanguage\\Expression` related
 to the :doc:`ExpressionLanguage component </components/expression_language>`.
+
+.. code-block:: twig
+
+    {{ expression(1 + 2) }}
+    {# output: 3 #}
 
 impersonation_exit_path
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -576,6 +663,11 @@ file_link
 
 Generates a link to the provided file and line number using
 a preconfigured scheme.
+
+.. code-block:: twig
+
+    {{ 'path/to/file/file.txt'|file_link(line = 3) }}
+    {# output: file://path/to/file/file.txt#L3 #}
 
 file_relative
 ~~~~~~~~~~~~~
