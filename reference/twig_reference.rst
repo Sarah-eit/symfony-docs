@@ -439,6 +439,42 @@ t
 Creates a ``Translatable`` object that can be passed to the
 :ref:`trans filter <reference-twig-filter-trans>`.
 
+.. configuration-block::
+
+    .. code-block:: yaml
+
+        # translations/blog.en.yaml
+        message: Hello %name%
+
+    .. code-block:: xml
+
+        <!-- translations/blog.en.xlf -->
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+            <file source-language="en" datatype="plaintext" original="file.ext">
+                <body>
+                    <trans-unit id="message">
+                        <source>message</source>
+                        <target>Hello %name%</target>
+                    </trans-unit>
+                </body>
+            </file>
+        </xliff>
+
+    .. code-block:: php
+
+        // translations/blog.en.php
+        return [
+            'message' => "Hello %name%",
+        ];
+
+Using the filter will be rendered as:
+
+.. code-block:: twig
+
+    {{ t(message = 'message', parameters = {'%name%': 'John'}, domain = 'blog')|trans }}
+    {# output: Hello John #}
+
 Form Related Functions
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -516,6 +552,42 @@ trans
 Translates the text into the current language. More information in
 :ref:`Translation Filters <translation-filters>`.
 
+.. configuration-block::
+
+    .. code-block:: yaml
+
+        # translations/messages.en.yaml
+        message: Hello %name%
+
+    .. code-block:: xml
+
+        <!-- translations/messages.en.xlf -->
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+            <file source-language="en" datatype="plaintext" original="file.ext">
+                <body>
+                    <trans-unit id="message">
+                        <source>message</source>
+                        <target>Hello %name%</target>
+                    </trans-unit>
+                </body>
+            </file>
+        </xliff>
+
+    .. code-block:: php
+
+        // translations/messages.en.php
+        return [
+            'message' => "Hello %name%",
+        ];
+
+Using the filter will be rendered as:
+
+.. code-block:: twig
+
+    {{ 'message'|trans(arguments = {'%name%': 'John'}, domain = 'messages', locale = 'en') }}
+    {# output: Hello John #}
+
 yaml_encode
 ~~~~~~~~~~~
 
@@ -563,6 +635,16 @@ abbr_class
 Generates an ``<abbr>`` element with the short name of a PHP class (the
 FQCN will be shown in a tooltip when a user hovers over the element).
 
+.. code-block:: twig
+
+    {{ 'App\\Entity\\Product'|abbr_class }}
+
+The above example will be rendered as:
+
+.. code-block:: html
+
+    <abbr title="App\Entity\Product">Product</abbr>
+
 abbr_method
 ~~~~~~~~~~~
 
@@ -576,6 +658,16 @@ abbr_method
 Generates an ``<abbr>`` element using the ``FQCN::method()`` syntax. If
 ``method`` is ``Closure``, ``Closure`` will be used instead and if ``method``
 doesn't have a class name, it's shown as a function (``method()``).
+
+.. code-block:: twig
+
+    {{ 'App\\Controller\\ProductController::list'|abbr_method }}
+
+The above example will be rendered as:
+
+.. code-block:: html
+
+    <abbr title="App\Controller\ProductController">ProductController</abbr>
 
 format_args
 ~~~~~~~~~~~
@@ -712,6 +804,21 @@ serialize
 
 Accepts any data that can be serialized by the :doc:`Serializer component </serializer>`
 and returns a serialized string in the specified ``format``.
+
+For example::
+
+    $object = new \stdClass();
+    $object->foo = 'bar';
+    $object->content = [];
+    $object->createdAt = new \DateTime('2024-11-30');
+
+.. code-block:: twig
+
+    {{ object|serialize(format = 'json', context = {
+        'datetime_format': 'D, Y-m-d',
+        'empty_array_as_object': true,
+    }) }}
+    {# output: {"foo":"bar","content":{},"createdAt":"Sat, 2024-11-30"} #}
 
 .. _reference-twig-tags:
 
